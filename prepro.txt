@@ -1,0 +1,98 @@
+ 
+
+**1. Importing Libraries:**
+
+```python
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import Imputer, LabelEncoder, StandardScaler
+```
+
+- `pandas (pd)`: For data manipulation and analysis.
+- `numpy (np)`: For numerical computations.
+- `scikit-learn (from sklearn.preprocessing import Imputer, LabelEncoder, StandardScaler)`: For data preprocessing techniques.
+
+**2. Loading Data:**
+
+```python
+# Load data from CSV file (replace 'your_data.csv' with your filename)
+data = pd.read_csv("your_data.csv")
+```
+
+**3. Data Cleaning:**
+
+* **Missing Values:**
+
+```python
+# Check for missing values
+print(data.isnull().sum())
+
+# Impute missing values with mean/median (replace 'column_name' with the actual column)
+data['column_name'].fillna(data['column_name'].mean(), inplace=True)
+```
+
+* **Outliers:**
+
+```python
+# Identify outliers (e.g., using IQR method)
+Q1 = data['column_name'].quantile(0.25)
+Q3 = data['column_name'].quantile(0.75)
+IQR = Q3 - Q1
+lower_bound = Q1 - (1.5 * IQR)
+upper_bound = Q3 + (1.5 * IQR)
+
+# Remove outliers (replace 'column_name' with the actual column)
+data = data[data['column_name'] > lower_bound]
+data = data[data['column_name'] < upper_bound]
+```
+
+**4. Data Transformation:**
+
+* **Encoding Categorical Data:**
+
+```python
+# Label Encoder for string categories
+le = LabelEncoder()
+data['category_column'] = le.fit_transform(data['category_column'])
+
+# One-Hot Encoding for multiple categories (using pandas.get_dummies)
+data = pd.get_dummies(data, columns=['category_column'])
+```
+
+* **Feature Scaling:**
+
+```python
+# StandardScaler for numerical features
+scaler = StandardScaler()
+data_scaled = scaler.fit_transform(data[['numerical_column1', 'numerical_column2']])
+```
+
+**5. Data Reduction:**
+
+* **Feature Selection (using correlation):**
+
+```python
+# Calculate correlation matrix
+correlation = data.corr()
+
+# Identify highly correlated features (replace 0.8 with your threshold)
+correlated_features = [col for col in correlation.columns 
+                        if any(correlation[col].abs() > 0.8  & col != col2) for col2 in correlation.columns]
+
+# Drop a correlated feature (replace 'correlated_feature' with the actual column)
+data.drop('correlated_feature', axis=1, inplace=True)
+```
+
+**6. Splitting Data:**
+
+```python
+from sklearn.model_selection import train_test_split
+
+# Split data into training and testing sets (e.g., 80% training, 20% testing)
+X_train, X_test, y_train, y_test = train_test_split(data.drop('target_column', axis=1), 
+                                                  data['target_column'], test_size=0.2)
+```
+
+Remember to replace placeholders like 'your_data.csv', 'column_name', etc., with your actual data and column names.
+
+ 
